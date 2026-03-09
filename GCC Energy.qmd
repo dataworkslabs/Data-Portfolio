@@ -1,0 +1,490 @@
+---
+title: "Global Energy Consumption Analysis"
+subtitle: "Source: Our World in Data"
+author: "Mark Hamer"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    theme: cosmo
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+
+library(tidyverse)
+library(scales)
+```
+
+```{r}
+#| label: load-data
+
+url <- "https://raw.githubusercontent.com/owid/energy-data/master/owid-energy-data.csv"
+energy_raw <- read_csv(url)
+
+glimpse(energy_raw)
+```
+
+```{r}
+#| label: data-structure
+
+# How many rows and columns?
+cat("Rows:", nrow(energy_raw), "\n")
+cat("Columns:", ncol(energy_raw), "\n")
+
+# Column names
+names(energy_raw)
+
+# Representative sample of raw wide structure
+energy_raw |>
+  filter(country %in% c("World", "Saudi Arabia")) |>
+  filter(year == 2022) |>
+  select(country, year, oil_electricity, gas_electricity, 
+         solar_electricity, wind_electricity) |>
+  knitr::kable(caption = "Sample of raw wide-format data before tidying")
+```
+## Introduction
+
+Global energy demand is rising — driven by population growth, industrialization,
+and the rapid expansion of AI data centers. At the center of this story sits the
+**Gulf Cooperation Council (GCC)**: Saudi Arabia, the UAE, Qatar, Kuwait, Bahrain,
+and Oman.
+
+These nations face a unique paradox. They occupy one of the **hottest regions on
+earth**, creating enormous domestic energy demand for cooling and desalination —
+yet they also sit atop the world's largest fossil fuel reserves, making their
+economies almost entirely dependent on energy exports.
+
+That dependence makes regional stability an existential economic priority. The
+**Strait of Hormuz** — controlled along its northern shore by Iran — is the
+world's most critical energy chokepoint. Roughly **20% of global oil supply**
+passes through it daily. Any military escalation between Iran and GCC states risks
+blockading that strait, triggering a global energy supply shock that would spike
+oil prices, destabilize economies worldwide, and set back the renewable energy
+transition for years.
+
+This analysis explores GCC energy consumption patterns, fossil fuel dependence,
+and what the data tells us about why these nations have every incentive to see
+the Iran conflict resolved quickly.
+
+```{r}
+#| label: filter-countries
+
+countries <- c("World", "United States", "Europe",
+               "Saudi Arabia", "United Arab Emirates", 
+               "Qatar", "Kuwait", "Bahrain", "Oman")
+
+gcc <- energy_raw |>
+  filter(country %in% countries) |>
+  select(
+    country, year,
+    energy_per_capita,
+    fossil_share_energy,
+    coal_electricity,
+    gas_electricity,
+    oil_electricity,
+    nuclear_electricity,
+    hydro_electricity,
+    solar_electricity,
+    wind_electricity,
+    other_renewable_electricity
+  ) |>
+  filter(year >= 2000) |>
+  mutate(
+    region = case_when(
+      country %in% c("Saudi Arabia", "United Arab Emirates",
+                     "Qatar", "Kuwait", "Bahrain", "Oman") ~ "GCC",
+      country == "United States"                           ~ "United States",
+      country == "Europe"                                  ~ "Europe",
+      country == "World"                                   ~ "World Average"
+    )
+  )
+```
+## What the Data Shows
+
+The first chart makes the gap impossible to ignore. Qatar consumes nearly 
+200,000 kWh per person per year — roughly **8 times the world average** and 
+almost **3 times the United States**. Every GCC country sits well above both 
+the US and Europe.
+
+This is not by accident. GCC nations face some of the harshest climate 
+conditions on earth, with summer temperatures regularly exceeding 45°C (113°F). 
+Air conditioning is not optional — it runs constantly, in homes, offices, 
+shopping malls, and even outdoor spaces. On top of that, energy prices in most 
+GCC countries are heavily government-subsidized, meaning there is little 
+financial pressure on consumers or industries to use less.
+
+The result is a region that is extraordinarily dependent on energy just to 
+function — and as the next chart shows, almost all of that energy comes from 
+fossil fuels.
+
+```{r}
+#| label: chart-per-capita
+#| fig-width: 10
+#| fig-height: 6
+
+gcc |>
+  filter(year == 2022, !is.na(energy_per_capita)) |>
+  mutate(country = fct_reorder(country, energy_per_capita)) |>
+  ggplot(aes(x = country, y = energy_per_capita, 
+             fill = country == "World")) +
+  geom_col(show.legend = FALSE) +
+  scale_fill_manual(values = c("TRUE" = "grey50", "FALSE" = "#006C35")) +
+  scale_y_continuous(labels = comma_format()) +
+  coord_flip() +
+  labs(
+    title   = "Energy Consumption Per Capita: GCC vs World Average (2022)",
+    subtitle = "GCC nations consume far more energy per person than the world average",
+    x       = NULL,
+    y       = "kWh per capita",
+    caption = "Source: Our World in Data"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold"))
+```
+
+
+```{r}
+#| label: chart-fossil-dependence
+#| fig-width: 10
+#| fig-height: 6
+
+gcc |>
+  filter(year == 2022, !is.na(fossil_share_energy)) |>
+  mutate(country = fct_reorder(country, fossil_share_energy)) |>
+  ggplot(aes(x = country, y = fossil_share_energy, fill = region)) +
+  geom_col(show.legend = TRUE) +
+  scale_fill_manual(values = c(
+    "GCC"           = "#006C35",
+    "United States" = "#B22234",
+    "Europe"        = "#003399",
+    "World Average" = "grey50"
+  )) +
+  scale_y_continuous(labels = percent_format(scale = 1)) +
+  coord_flip() +
+  labs(
+    title    = "Fossil Fuel Dependence by Country (2022)",
+    subtitle = "% of total energy consumption coming from coal, oil, and gas",
+    x        = NULL,
+    y        = "% of energy from fossil fuels",
+    fill     = NULL,
+    caption  = "Source: Our World in Data"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title      = element_text(face = "bold"),
+    legend.position = "bottom"
+  )
+```
+
+Kuwait and Saudi Arabia sit at nearly 100% fossil fuel dependence. Even the 
+UAE, which has invested in solar and nuclear, still derives over 90% of its 
+energy from fossil fuels. Compare that to Europe at around 70% — still high, 
+but on a clear downward trend thanks to renewables and nuclear investment.
+
+This total dependence on fossil fuels creates a dangerous feedback loop: 
+burning fossil fuels drives climate change, rising temperatures demand more 
+cooling, more cooling requires more energy, and more energy means more 
+emissions. The GCC is caught at the center of this cycle — and the Strait of 
+Hormuz sits at the center of their ability to sustain it.
+
+```{r}
+#| label: wide-to-long
+
+gcc_long <- gcc |>
+  filter(year == 2022) |>
+  select(country, region,
+         coal_electricity, gas_electricity, oil_electricity,
+         nuclear_electricity, hydro_electricity, solar_electricity,
+         wind_electricity, other_renewable_electricity) |>
+  pivot_longer(
+    cols      = -c(country, region),
+    names_to  = "source",
+    values_to = "twh"
+  ) |>
+  mutate(
+    source = source |>
+      str_remove("_electricity") |>
+      str_replace("other_renewable", "Other Renewables") |>
+      str_to_title()
+  ) |>
+  drop_na(twh)
+
+head(gcc_long)
+```
+```{r}
+#| label: chart-energy-mix
+#| fig-width: 10
+#| fig-height: 6
+
+source_colors <- c(
+  "Coal"               = "#3d3d3d",
+  "Oil"                = "#7a5215",
+  "Gas"                = "#c06020",
+  "Nuclear"            = "#8e44ad",
+  "Hydro"              = "#1a6fa8",
+  "Solar"              = "#e8b820",
+  "Wind"               = "#27ae60",
+  "Other Renewables"   = "#5dade2"
+)
+
+gcc_long |>
+  mutate(country = fct_reorder(country, twh, .fun = sum)) |>
+  ggplot(aes(x = country, y = twh, fill = source)) +
+  geom_col(position = "fill") +
+  scale_fill_manual(values = source_colors) +
+  scale_y_continuous(labels = percent_format()) +
+  coord_flip() +
+  labs(
+    title    = "Energy Mix by Source (2022)",
+    subtitle = "GCC countries rely almost entirely on gas and oil — renewables are barely visible",
+    x        = NULL,
+    y        = "Share of electricity generation",
+    fill     = "Source",
+    caption  = "Source: Our World in Data"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title      = element_text(face = "bold"),
+    legend.position = "bottom"
+  )
+```
+```{r}
+#| label: check-columns
+
+energy_raw |>
+  filter(country == "Saudi Arabia") |>
+  select(year) |>
+  bind_cols(
+    energy_raw |>
+      filter(country == "Saudi Arabia") |>
+      select(contains("gdp") | contains("oil") | contains("rent"))
+  ) |>
+  glimpse()
+```
+```{r}
+#| label: chart-oil-gdp
+#| fig-width: 10
+#| fig-height: 6
+
+energy_raw |>
+  filter(country %in% countries, year == 2021) |>
+  mutate(
+    region = case_when(
+      country %in% c("Saudi Arabia", "United Arab Emirates",
+                     "Qatar", "Kuwait", "Bahrain", "Oman") ~ "GCC",
+      country == "United States"                           ~ "United States",
+      country == "Europe"                                  ~ "Europe",
+      country == "World"                                   ~ "World Average"
+    )
+  ) |>
+  filter(!is.na(oil_share_energy)) |>
+  mutate(country = fct_reorder(country, oil_share_energy)) |>
+  ggplot(aes(x = country, y = oil_share_energy, fill = region)) +
+  geom_col(show.legend = TRUE) +
+  scale_fill_manual(values = c(
+    "GCC"           = "#006C35",
+    "United States" = "#B22234",
+    "Europe"        = "#003399",
+    "World Average" = "grey50"
+  )) +
+  scale_y_continuous(labels = percent_format(scale = 1)) +
+  coord_flip() +
+  labs(
+    title    = "Oil Share of Total Energy Consumption (2021)",
+    subtitle = "GCC economies run on oil — a closed Strait cuts off both their exports and their income",
+    x        = NULL,
+    y        = "% of energy from oil",
+    fill     = NULL,
+    caption  = "Source: Our World in Data"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title      = element_text(face = "bold"),
+    legend.position = "bottom"
+  )
+```
+```{r}
+#| label: chart-chokepoints
+#| fig-width: 10
+#| fig-height: 6
+
+chokepoints <- tibble(
+  location = c(
+    "Strait of Hormuz",
+    "Strait of Malacca",
+    "Suez Canal",
+    "Bab el-Mandeb",
+    "Turkish Straits",
+    "Danish Straits",
+    "Cape of Good Hope"
+  ),
+  barrels_per_day = c(21, 16, 9.2, 8.8, 4.8, 3.4, 1.5),
+  involves_gcc = c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
+)
+
+chokepoints |>
+  mutate(location = fct_reorder(location, barrels_per_day)) |>
+  ggplot(aes(x = location, y = barrels_per_day, 
+             fill = involves_gcc)) +
+  geom_col(show.legend = FALSE) +
+  scale_fill_manual(values = c("TRUE" = "#006C35", "FALSE" = "grey60")) +
+  geom_text(aes(label = paste0(barrels_per_day, "M bbl/day")),
+            hjust = -0.1, size = 3.5, fontface = "bold") +
+  coord_flip(clip = "off") +
+  scale_y_continuous(limits = c(0, 25)) +
+  labs(
+    title    = "World's Major Oil Chokepoints by Daily Flow (2023)",
+    subtitle = "The Strait of Hormuz carries more oil than any other single point on earth",
+    x        = NULL,
+    y        = "Million barrels per day",
+    caption  = "Source: U.S. Energy Information Administration (EIA), 2023"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title      = element_text(face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+```
+
+The Strait of Hormuz is not just another shipping lane. It carries more oil 
+than any other single point on earth — nearly 21 million barrels every day. 
+No other chokepoint comes close. If this strait closes, there is no realistic 
+alternative route that can absorb that volume. The world would feel it immediately.
+
+```{r}
+#| label: chart-revenue-loss
+#| fig-width: 10
+#| fig-height: 6
+
+revenue <- tibble(
+  country = c("Saudi Arabia", "UAE", "Kuwait", "Qatar", "Oman", "Bahrain"),
+  daily_export_revenue_billion = c(5.8, 2.1, 1.5, 1.9, 0.5, 0.1)
+)
+
+revenue |>
+  mutate(
+    country = fct_reorder(country, daily_export_revenue_billion),
+    monthly_loss = daily_export_revenue_billion * 30
+  ) |>
+  ggplot(aes(x = country, y = daily_export_revenue_billion)) +
+  geom_col(fill = "#006C35") +
+  geom_text(aes(label = paste0("$", daily_export_revenue_billion, "B/day")),
+            hjust = -0.1, size = 3.5, fontface = "bold") +
+  coord_flip(clip = "off") +
+  scale_y_continuous(limits = c(0, 8)) +
+  labs(
+    title    = "Estimated Daily Oil Export Revenue at Risk (2023)",
+    subtitle = "Revenue lost per day if the Strait of Hormuz is closed",
+    x        = NULL,
+    y        = "Billion USD per day",
+    caption  = "Source: EIA, OPEC Annual Statistical Bulletin 2023"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title       = element_text(face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+```
+
+Saudi Arabia stands to lose nearly $6 billion every single day the Strait is 
+closed. Combined across all GCC nations, that is over $12 billion in daily 
+revenue gone. These are not economies that can absorb that kind of shock for 
+long — oil exports are not one part of their economy, they are virtually the 
+entire economy.
+
+```{r}
+#| label: chart-import-collapse
+#| fig-width: 10
+#| fig-height: 6
+
+imports <- tibble(
+  country  = c("Saudi Arabia", "UAE", "Kuwait", "Qatar", "Oman", "Bahrain"),
+  food_pct        = c(80, 90, 90, 90, 80, 85),
+  medicine_pct    = c(75, 85, 80, 85, 70, 80),
+  technology_pct  = c(95, 95, 90, 90, 85, 90)
+) |>
+  pivot_longer(
+    cols      = -country,
+    names_to  = "category",
+    values_to = "pct_imported"
+  ) |>
+  mutate(
+    category = case_when(
+      category == "food_pct"       ~ "Food",
+      category == "medicine_pct"   ~ "Medicine",
+      category == "technology_pct" ~ "Technology"
+    )
+  )
+
+imports |>
+  mutate(country = fct_reorder(country, pct_imported, .fun = mean)) |>
+  ggplot(aes(x = country, y = pct_imported, fill = category)) +
+  geom_col(position = "dodge") +
+  scale_fill_manual(values = c(
+    "Food"       = "#c06020",
+    "Medicine"   = "#8e44ad",
+    "Technology" = "#1a6fa8"
+  )) +
+  scale_y_continuous(labels = percent_format(scale = 1),
+                     limits = c(0, 110)) +
+  geom_text(aes(label = paste0(pct_imported, "%")),
+            position = position_dodge(width = 0.9),
+            vjust = -0.5, size = 2.8, fontface = "bold") +
+  labs(
+    title    = "GCC Import Dependency: Food, Medicine & Technology (2023)",
+    subtitle = "With oil revenue gone, GCC nations cannot afford to pay for basic necessities",
+    x        = NULL,
+    y        = "% sourced from imports",
+    fill     = NULL,
+    caption  = "Source: World Bank, FAO, 2023"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title       = element_text(face = "bold"),
+    legend.position  = "bottom",
+    panel.grid.minor = element_blank()
+  )
+```
+
+This is where the vulnerability becomes a survival issue. GCC nations import 
+nearly all of their food, medicine, and technology. They can only afford to do 
+that because of oil revenue. Without exports flowing through the Strait, that 
+purchasing power disappears almost overnight. A country that consumes 8 times 
+the world average in energy and imports 90% of its food has no buffer. There 
+is no fallback.
+
+## Conclusion
+
+The data tells a clear and connected story. GCC nations consume extraordinary 
+amounts of energy — driven by extreme heat, subsidized prices, and energy 
+intensive industries like desalination and oil refining. That consumption runs 
+almost entirely on fossil fuels, with renewables barely registering in the 
+energy mix. And the revenue that sustains these societies flows almost entirely 
+through one narrow waterway — the Strait of Hormuz.
+
+A closure of the Strait would not just inconvenience these economies. It would 
+cut off the income they depend on to import food, medicine, and basic goods. 
+Nations that consume the most energy per person on earth have built societies 
+that physically cannot function without it — and cannot pay for it without 
+their oil exports moving freely.
+
+This is why the GCC has every reason to want the Iran conflict resolved. It is 
+not just about regional stability or diplomacy. It is about the economic and 
+physical survival of nations that have built everything around a supply chain 
+with a single point of failure.
+
+As global energy demand continues to rise — accelerated by AI data centers, 
+EV adoption, and population growth — the pressure on that chokepoint only 
+increases. The transition to renewables is not just a climate issue. For the 
+GCC, it may eventually be the only path to an economy that does not depend on 
+a strait that one country can close overnight.
+
+
+

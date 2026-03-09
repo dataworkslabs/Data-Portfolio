@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Mark Hamer">
+<meta name="dcterms.date" content="2026-03-08">
+
+<title>Global Energy Consumption Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="GCC Energy_files/libs/clipboard/clipboard.min.js"></script>
+<script src="GCC Energy_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="GCC Energy_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="GCC Energy_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="GCC Energy_files/libs/quarto-html/popper.min.js"></script>
+<script src="GCC Energy_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="GCC Energy_files/libs/quarto-html/anchor.min.js"></script>
+<link href="GCC Energy_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="GCC Energy_files/libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="GCC Energy_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="GCC Energy_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="GCC Energy_files/libs/bootstrap/bootstrap-a74871fe4945b66d259aafc266475145.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#what-the-data-shows" id="toc-what-the-data-shows" class="nav-link" data-scroll-target="#what-the-data-shows">What the Data Shows</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Global Energy Consumption Analysis</h1>
+<p class="subtitle lead">Source: Our World in Data</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Mark Hamer </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 8, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/owid/energy-data/master/owid-energy-data.csv"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>energy_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(url)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(energy_raw)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 23,232
+Columns: 130
+$ country                                      &lt;chr&gt; "ASEAN (Ember)", "ASEAN (…
+$ year                                         &lt;dbl&gt; 2000, 2001, 2002, 2003, 2…
+$ iso_code                                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, N…
+$ population                                   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ gdp                                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ biofuel_cons_change_pct                      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ biofuel_cons_change_twh                      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ biofuel_cons_per_capita                      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ biofuel_consumption                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ biofuel_elec_per_capita                      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ biofuel_electricity                          &lt;dbl&gt; 5.87, 6.46, 6.62, 7.45, 8…
+$ biofuel_share_elec                           &lt;dbl&gt; 1.550, 1.596, 1.528, 1.62…
+$ biofuel_share_energy                         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ carbon_intensity_elec                        &lt;dbl&gt; 572.52, 570.24, 572.68, 5…
+$ coal_cons_change_pct                         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ coal_cons_change_twh                         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ coal_cons_per_capita                         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ coal_consumption                             &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ coal_elec_per_capita                         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ coal_electricity                             &lt;dbl&gt; 76.03, 86.26, 93.43, 102.…
+$ coal_prod_change_pct                         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ coal_prod_change_twh                         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ coal_prod_per_capita                         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ coal_production                              &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ coal_share_elec                              &lt;dbl&gt; 20.081, 21.307, 21.568, 2…
+$ coal_share_energy                            &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ electricity_demand                           &lt;dbl&gt; 378.61, 404.85, 433.19, 4…
+$ electricity_demand_per_capita                &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ electricity_generation                       &lt;dbl&gt; 378.61, 404.85, 433.19, 4…
+$ electricity_share_energy                     &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ energy_cons_change_pct                       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ energy_cons_change_twh                       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ energy_per_capita                            &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ energy_per_gdp                               &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ fossil_cons_change_pct                       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ fossil_cons_change_twh                       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ fossil_elec_per_capita                       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ fossil_electricity                           &lt;dbl&gt; 305.36, 327.66, 356.67, 3…
+$ fossil_energy_per_capita                     &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ fossil_fuel_consumption                      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ fossil_share_elec                            &lt;dbl&gt; 80.653, 80.934, 82.336, 8…
+$ fossil_share_energy                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ gas_cons_change_pct                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ gas_cons_change_twh                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ gas_consumption                              &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ gas_elec_per_capita                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ gas_electricity                              &lt;dbl&gt; 164.26, 190.41, 208.92, 2…
+$ gas_energy_per_capita                        &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ gas_prod_change_pct                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ gas_prod_change_twh                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ gas_prod_per_capita                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ gas_production                               &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ gas_share_elec                               &lt;dbl&gt; 43.385, 47.032, 48.228, 4…
+$ gas_share_energy                             &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ greenhouse_gas_emissions                     &lt;dbl&gt; 216.76, 230.86, 248.08, 2…
+$ hydro_cons_change_pct                        &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ hydro_cons_change_twh                        &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ hydro_consumption                            &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ hydro_elec_per_capita                        &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ hydro_electricity                            &lt;dbl&gt; 50.45, 54.33, 53.29, 53.2…
+$ hydro_energy_per_capita                      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ hydro_share_elec                             &lt;dbl&gt; 13.325, 13.420, 12.302, 1…
+$ hydro_share_energy                           &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ low_carbon_cons_change_pct                   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ low_carbon_cons_change_twh                   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ low_carbon_consumption                       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ low_carbon_elec_per_capita                   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ low_carbon_electricity                       &lt;dbl&gt; 73.25, 77.19, 76.52, 76.4…
+$ low_carbon_energy_per_capita                 &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ low_carbon_share_elec                        &lt;dbl&gt; 19.347, 19.066, 17.664, 1…
+$ low_carbon_share_energy                      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ net_elec_imports                             &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ net_elec_imports_share_demand                &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ nuclear_cons_change_pct                      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ nuclear_cons_change_twh                      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ nuclear_consumption                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ nuclear_elec_per_capita                      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ nuclear_electricity                          &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ nuclear_energy_per_capita                    &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ nuclear_share_elec                           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0…
+$ nuclear_share_energy                         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ oil_cons_change_pct                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ oil_cons_change_twh                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ oil_consumption                              &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ oil_elec_per_capita                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ oil_electricity                              &lt;dbl&gt; 65.07, 50.99, 54.32, 53.3…
+$ oil_energy_per_capita                        &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ oil_prod_change_pct                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ oil_prod_change_twh                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ oil_prod_per_capita                          &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ oil_production                               &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ oil_share_elec                               &lt;dbl&gt; 17.187, 12.595, 12.540, 1…
+$ oil_share_energy                             &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ other_renewable_consumption                  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ other_renewable_electricity                  &lt;dbl&gt; 22.80, 22.86, 23.23, 23.1…
+$ other_renewable_exc_biofuel_electricity      &lt;dbl&gt; 16.93, 16.40, 16.61, 15.7…
+$ other_renewables_cons_change_pct             &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ other_renewables_cons_change_twh             &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ other_renewables_elec_per_capita             &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ other_renewables_elec_per_capita_exc_biofuel &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ other_renewables_energy_per_capita           &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ other_renewables_share_elec                  &lt;dbl&gt; 6.022, 5.647, 5.363, 5.06…
+$ other_renewables_share_elec_exc_biofuel      &lt;dbl&gt; 4.472, 4.051, 3.834, 3.43…
+$ other_renewables_share_energy                &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ per_capita_electricity                       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ primary_energy_consumption                   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ renewables_cons_change_pct                   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ renewables_cons_change_twh                   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ renewables_consumption                       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ renewables_elec_per_capita                   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ renewables_electricity                       &lt;dbl&gt; 73.25, 77.19, 76.52, 76.4…
+$ renewables_energy_per_capita                 &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ renewables_share_elec                        &lt;dbl&gt; 19.347, 19.066, 17.664, 1…
+$ renewables_share_energy                      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ solar_cons_change_pct                        &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ solar_cons_change_twh                        &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ solar_consumption                            &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ solar_elec_per_capita                        &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ solar_electricity                            &lt;dbl&gt; 0.00, 0.00, 0.00, 0.00, 0…
+$ solar_energy_per_capita                      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ solar_share_elec                             &lt;dbl&gt; 0.000, 0.000, 0.000, 0.00…
+$ solar_share_energy                           &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ wind_cons_change_pct                         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ wind_cons_change_twh                         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ wind_consumption                             &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ wind_elec_per_capita                         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ wind_electricity                             &lt;dbl&gt; 0.00, 0.00, 0.00, 0.00, 0…
+$ wind_energy_per_capita                       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…
+$ wind_share_elec                              &lt;dbl&gt; 0.000, 0.000, 0.000, 0.00…
+$ wind_share_energy                            &lt;dbl&gt; NA, NA, NA, NA, NA, NA, N…</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># How many rows and columns?</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Rows:"</span>, <span class="fu">nrow</span>(energy_raw), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 23232 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Columns:"</span>, <span class="fu">ncol</span>(energy_raw), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Columns: 130 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Column names</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(energy_raw)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] "country"                                     
+  [2] "year"                                        
+  [3] "iso_code"                                    
+  [4] "population"                                  
+  [5] "gdp"                                         
+  [6] "biofuel_cons_change_pct"                     
+  [7] "biofuel_cons_change_twh"                     
+  [8] "biofuel_cons_per_capita"                     
+  [9] "biofuel_consumption"                         
+ [10] "biofuel_elec_per_capita"                     
+ [11] "biofuel_electricity"                         
+ [12] "biofuel_share_elec"                          
+ [13] "biofuel_share_energy"                        
+ [14] "carbon_intensity_elec"                       
+ [15] "coal_cons_change_pct"                        
+ [16] "coal_cons_change_twh"                        
+ [17] "coal_cons_per_capita"                        
+ [18] "coal_consumption"                            
+ [19] "coal_elec_per_capita"                        
+ [20] "coal_electricity"                            
+ [21] "coal_prod_change_pct"                        
+ [22] "coal_prod_change_twh"                        
+ [23] "coal_prod_per_capita"                        
+ [24] "coal_production"                             
+ [25] "coal_share_elec"                             
+ [26] "coal_share_energy"                           
+ [27] "electricity_demand"                          
+ [28] "electricity_demand_per_capita"               
+ [29] "electricity_generation"                      
+ [30] "electricity_share_energy"                    
+ [31] "energy_cons_change_pct"                      
+ [32] "energy_cons_change_twh"                      
+ [33] "energy_per_capita"                           
+ [34] "energy_per_gdp"                              
+ [35] "fossil_cons_change_pct"                      
+ [36] "fossil_cons_change_twh"                      
+ [37] "fossil_elec_per_capita"                      
+ [38] "fossil_electricity"                          
+ [39] "fossil_energy_per_capita"                    
+ [40] "fossil_fuel_consumption"                     
+ [41] "fossil_share_elec"                           
+ [42] "fossil_share_energy"                         
+ [43] "gas_cons_change_pct"                         
+ [44] "gas_cons_change_twh"                         
+ [45] "gas_consumption"                             
+ [46] "gas_elec_per_capita"                         
+ [47] "gas_electricity"                             
+ [48] "gas_energy_per_capita"                       
+ [49] "gas_prod_change_pct"                         
+ [50] "gas_prod_change_twh"                         
+ [51] "gas_prod_per_capita"                         
+ [52] "gas_production"                              
+ [53] "gas_share_elec"                              
+ [54] "gas_share_energy"                            
+ [55] "greenhouse_gas_emissions"                    
+ [56] "hydro_cons_change_pct"                       
+ [57] "hydro_cons_change_twh"                       
+ [58] "hydro_consumption"                           
+ [59] "hydro_elec_per_capita"                       
+ [60] "hydro_electricity"                           
+ [61] "hydro_energy_per_capita"                     
+ [62] "hydro_share_elec"                            
+ [63] "hydro_share_energy"                          
+ [64] "low_carbon_cons_change_pct"                  
+ [65] "low_carbon_cons_change_twh"                  
+ [66] "low_carbon_consumption"                      
+ [67] "low_carbon_elec_per_capita"                  
+ [68] "low_carbon_electricity"                      
+ [69] "low_carbon_energy_per_capita"                
+ [70] "low_carbon_share_elec"                       
+ [71] "low_carbon_share_energy"                     
+ [72] "net_elec_imports"                            
+ [73] "net_elec_imports_share_demand"               
+ [74] "nuclear_cons_change_pct"                     
+ [75] "nuclear_cons_change_twh"                     
+ [76] "nuclear_consumption"                         
+ [77] "nuclear_elec_per_capita"                     
+ [78] "nuclear_electricity"                         
+ [79] "nuclear_energy_per_capita"                   
+ [80] "nuclear_share_elec"                          
+ [81] "nuclear_share_energy"                        
+ [82] "oil_cons_change_pct"                         
+ [83] "oil_cons_change_twh"                         
+ [84] "oil_consumption"                             
+ [85] "oil_elec_per_capita"                         
+ [86] "oil_electricity"                             
+ [87] "oil_energy_per_capita"                       
+ [88] "oil_prod_change_pct"                         
+ [89] "oil_prod_change_twh"                         
+ [90] "oil_prod_per_capita"                         
+ [91] "oil_production"                              
+ [92] "oil_share_elec"                              
+ [93] "oil_share_energy"                            
+ [94] "other_renewable_consumption"                 
+ [95] "other_renewable_electricity"                 
+ [96] "other_renewable_exc_biofuel_electricity"     
+ [97] "other_renewables_cons_change_pct"            
+ [98] "other_renewables_cons_change_twh"            
+ [99] "other_renewables_elec_per_capita"            
+[100] "other_renewables_elec_per_capita_exc_biofuel"
+[101] "other_renewables_energy_per_capita"          
+[102] "other_renewables_share_elec"                 
+[103] "other_renewables_share_elec_exc_biofuel"     
+[104] "other_renewables_share_energy"               
+[105] "per_capita_electricity"                      
+[106] "primary_energy_consumption"                  
+[107] "renewables_cons_change_pct"                  
+[108] "renewables_cons_change_twh"                  
+[109] "renewables_consumption"                      
+[110] "renewables_elec_per_capita"                  
+[111] "renewables_electricity"                      
+[112] "renewables_energy_per_capita"                
+[113] "renewables_share_elec"                       
+[114] "renewables_share_energy"                     
+[115] "solar_cons_change_pct"                       
+[116] "solar_cons_change_twh"                       
+[117] "solar_consumption"                           
+[118] "solar_elec_per_capita"                       
+[119] "solar_electricity"                           
+[120] "solar_energy_per_capita"                     
+[121] "solar_share_elec"                            
+[122] "solar_share_energy"                          
+[123] "wind_cons_change_pct"                        
+[124] "wind_cons_change_twh"                        
+[125] "wind_consumption"                            
+[126] "wind_elec_per_capita"                        
+[127] "wind_electricity"                            
+[128] "wind_energy_per_capita"                      
+[129] "wind_share_elec"                             
+[130] "wind_share_energy"                           </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Representative sample of raw wide structure</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>energy_raw <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"World"</span>, <span class="st">"Saudi Arabia"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2022</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(country, year, oil_electricity, gas_electricity, </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>         solar_electricity, wind_electricity) <span class="sc">|&gt;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Sample of raw wide-format data before tidying"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Sample of raw wide-format data before tidying</caption>
+<colgroup>
+<col style="width: 15%">
+<col style="width: 5%">
+<col style="width: 18%">
+<col style="width: 18%">
+<col style="width: 21%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">year</th>
+<th style="text-align: right;">oil_electricity</th>
+<th style="text-align: right;">gas_electricity</th>
+<th style="text-align: right;">solar_electricity</th>
+<th style="text-align: right;">wind_electricity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Saudi Arabia</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: right;">159.99</td>
+<td style="text-align: right;">247.84</td>
+<td style="text-align: right;">1.22</td>
+<td style="text-align: right;">0.79</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">World</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: right;">888.28</td>
+<td style="text-align: right;">6629.74</td>
+<td style="text-align: right;">1330.01</td>
+<td style="text-align: right;">2107.18</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Global energy demand is rising — driven by population growth, industrialization, and the rapid expansion of AI data centers. At the center of this story sits the <strong>Gulf Cooperation Council (GCC)</strong>: Saudi Arabia, the UAE, Qatar, Kuwait, Bahrain, and Oman.</p>
+<p>These nations face a unique paradox. They occupy one of the <strong>hottest regions on earth</strong>, creating enormous domestic energy demand for cooling and desalination — yet they also sit atop the world’s largest fossil fuel reserves, making their economies almost entirely dependent on energy exports.</p>
+<p>That dependence makes regional stability an existential economic priority. The <strong>Strait of Hormuz</strong> — controlled along its northern shore by Iran — is the world’s most critical energy chokepoint. Roughly <strong>20% of global oil supply</strong> passes through it daily. Any military escalation between Iran and GCC states risks blockading that strait, triggering a global energy supply shock that would spike oil prices, destabilize economies worldwide, and set back the renewable energy transition for years.</p>
+<p>This analysis explores GCC energy consumption patterns, fossil fuel dependence, and what the data tells us about why these nations have every incentive to see the Iran conflict resolved quickly.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>countries <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"World"</span>, <span class="st">"United States"</span>, <span class="st">"Europe"</span>,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Saudi Arabia"</span>, <span class="st">"United Arab Emirates"</span>, </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Qatar"</span>, <span class="st">"Kuwait"</span>, <span class="st">"Bahrain"</span>, <span class="st">"Oman"</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>gcc <span class="ot">&lt;-</span> energy_raw <span class="sc">|&gt;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">%in%</span> countries) <span class="sc">|&gt;</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    country, year,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    energy_per_capita,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    fossil_share_energy,</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    coal_electricity,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    gas_electricity,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    oil_electricity,</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    nuclear_electricity,</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    hydro_electricity,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    solar_electricity,</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    wind_electricity,</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    other_renewable_electricity</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">&gt;=</span> <span class="dv">2000</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">region =</span> <span class="fu">case_when</span>(</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>      country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Saudi Arabia"</span>, <span class="st">"United Arab Emirates"</span>,</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Qatar"</span>, <span class="st">"Kuwait"</span>, <span class="st">"Bahrain"</span>, <span class="st">"Oman"</span>) <span class="sc">~</span> <span class="st">"GCC"</span>,</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>      country <span class="sc">==</span> <span class="st">"United States"</span>                           <span class="sc">~</span> <span class="st">"United States"</span>,</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>      country <span class="sc">==</span> <span class="st">"Europe"</span>                                  <span class="sc">~</span> <span class="st">"Europe"</span>,</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>      country <span class="sc">==</span> <span class="st">"World"</span>                                   <span class="sc">~</span> <span class="st">"World Average"</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="what-the-data-shows" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-data-shows">What the Data Shows</h2>
+<p>The first chart makes the gap impossible to ignore. Qatar consumes nearly 200,000 kWh per person per year — roughly <strong>8 times the world average</strong> and almost <strong>3 times the United States</strong>. Every GCC country sits well above both the US and Europe.</p>
+<p>This is not by accident. GCC nations face some of the harshest climate conditions on earth, with summer temperatures regularly exceeding 45°C (113°F). Air conditioning is not optional — it runs constantly, in homes, offices, shopping malls, and even outdoor spaces. On top of that, energy prices in most GCC countries are heavily government-subsidized, meaning there is little financial pressure on consumers or industries to use less.</p>
+<p>The result is a region that is extraordinarily dependent on energy just to function — and as the next chart shows, almost all of that energy comes from fossil fuels.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>gcc <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2022</span>, <span class="sc">!</span><span class="fu">is.na</span>(energy_per_capita)) <span class="sc">|&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">country =</span> <span class="fu">fct_reorder</span>(country, energy_per_capita)) <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> country, <span class="at">y =</span> energy_per_capita, </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">fill =</span> country <span class="sc">==</span> <span class="st">"World"</span>)) <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"TRUE"</span> <span class="ot">=</span> <span class="st">"grey50"</span>, <span class="st">"FALSE"</span> <span class="ot">=</span> <span class="st">"#006C35"</span>)) <span class="sc">+</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="fu">comma_format</span>()) <span class="sc">+</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">title   =</span> <span class="st">"Energy Consumption Per Capita: GCC vs World Average (2022)"</span>,</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"GCC nations consume far more energy per person than the world average"</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x       =</span> <span class="cn">NULL</span>,</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y       =</span> <span class="st">"kWh per capita"</span>,</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Source: Our World in Data"</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GCC-Energy_files/figure-html/chart-per-capita-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>gcc <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2022</span>, <span class="sc">!</span><span class="fu">is.na</span>(fossil_share_energy)) <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">country =</span> <span class="fu">fct_reorder</span>(country, fossil_share_energy)) <span class="sc">|&gt;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> country, <span class="at">y =</span> fossil_share_energy, <span class="at">fill =</span> region)) <span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"GCC"</span>           <span class="ot">=</span> <span class="st">"#006C35"</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"United States"</span> <span class="ot">=</span> <span class="st">"#B22234"</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Europe"</span>        <span class="ot">=</span> <span class="st">"#003399"</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"World Average"</span> <span class="ot">=</span> <span class="st">"grey50"</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="fu">percent_format</span>(<span class="at">scale =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Fossil Fuel Dependence by Country (2022)"</span>,</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"% of total energy consumption coming from coal, oil, and gas"</span>,</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="cn">NULL</span>,</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"% of energy from fossil fuels"</span>,</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill     =</span> <span class="cn">NULL</span>,</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: Our World in Data"</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title      =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GCC-Energy_files/figure-html/chart-fossil-dependence-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Kuwait and Saudi Arabia sit at nearly 100% fossil fuel dependence. Even the UAE, which has invested in solar and nuclear, still derives over 90% of its energy from fossil fuels. Compare that to Europe at around 70% — still high, but on a clear downward trend thanks to renewables and nuclear investment.</p>
+<p>This total dependence on fossil fuels creates a dangerous feedback loop: burning fossil fuels drives climate change, rising temperatures demand more cooling, more cooling requires more energy, and more energy means more emissions. The GCC is caught at the center of this cycle — and the Strait of Hormuz sits at the center of their ability to sustain it.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>gcc_long <span class="ot">&lt;-</span> gcc <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2022</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(country, region,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>         coal_electricity, gas_electricity, oil_electricity,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>         nuclear_electricity, hydro_electricity, solar_electricity,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>         wind_electricity, other_renewable_electricity) <span class="sc">|&gt;</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols      =</span> <span class="sc">-</span><span class="fu">c</span>(country, region),</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to  =</span> <span class="st">"source"</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"twh"</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">source =</span> source <span class="sc">|&gt;</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_remove</span>(<span class="st">"_electricity"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_replace</span>(<span class="st">"other_renewable"</span>, <span class="st">"Other Renewables"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">str_to_title</span>()</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(twh)</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(gcc_long)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+  country region source    twh
+  &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;   &lt;dbl&gt;
+1 Bahrain GCC    Coal     0   
+2 Bahrain GCC    Gas     35.6 
+3 Bahrain GCC    Oil      0   
+4 Bahrain GCC    Nuclear  0   
+5 Bahrain GCC    Hydro    0   
+6 Bahrain GCC    Solar    0.08</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>source_colors <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Coal"</span>               <span class="ot">=</span> <span class="st">"#3d3d3d"</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Oil"</span>                <span class="ot">=</span> <span class="st">"#7a5215"</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Gas"</span>                <span class="ot">=</span> <span class="st">"#c06020"</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Nuclear"</span>            <span class="ot">=</span> <span class="st">"#8e44ad"</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Hydro"</span>              <span class="ot">=</span> <span class="st">"#1a6fa8"</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Solar"</span>              <span class="ot">=</span> <span class="st">"#e8b820"</span>,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Wind"</span>               <span class="ot">=</span> <span class="st">"#27ae60"</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Other Renewables"</span>   <span class="ot">=</span> <span class="st">"#5dade2"</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>gcc_long <span class="sc">|&gt;</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">country =</span> <span class="fu">fct_reorder</span>(country, twh, <span class="at">.fun =</span> sum)) <span class="sc">|&gt;</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> country, <span class="at">y =</span> twh, <span class="at">fill =</span> source)) <span class="sc">+</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> source_colors) <span class="sc">+</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="fu">percent_format</span>()) <span class="sc">+</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Energy Mix by Source (2022)"</span>,</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"GCC countries rely almost entirely on gas and oil — renewables are barely visible"</span>,</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="cn">NULL</span>,</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Share of electricity generation"</span>,</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill     =</span> <span class="st">"Source"</span>,</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: Our World in Data"</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title      =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GCC-Energy_files/figure-html/chart-energy-mix-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>energy_raw <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">==</span> <span class="st">"Saudi Arabia"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    energy_raw <span class="sc">|&gt;</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(country <span class="sc">==</span> <span class="st">"Saudi Arabia"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"gdp"</span>) <span class="sc">|</span> <span class="fu">contains</span>(<span class="st">"oil"</span>) <span class="sc">|</span> <span class="fu">contains</span>(<span class="st">"rent"</span>))</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 125
+Columns: 15
+$ year                  &lt;dbl&gt; 1900, 1901, 1902, 1903, 1904, 1905, 1906, 1907, …
+$ gdp                   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ energy_per_gdp        &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ oil_cons_change_pct   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ oil_cons_change_twh   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ oil_consumption       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ oil_elec_per_capita   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ oil_electricity       &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ oil_energy_per_capita &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ oil_prod_change_pct   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ oil_prod_change_twh   &lt;dbl&gt; NA, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ oil_prod_per_capita   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+$ oil_production        &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+$ oil_share_elec        &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ oil_share_energy      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>energy_raw <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country <span class="sc">%in%</span> countries, year <span class="sc">==</span> <span class="dv">2021</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">region =</span> <span class="fu">case_when</span>(</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>      country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Saudi Arabia"</span>, <span class="st">"United Arab Emirates"</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Qatar"</span>, <span class="st">"Kuwait"</span>, <span class="st">"Bahrain"</span>, <span class="st">"Oman"</span>) <span class="sc">~</span> <span class="st">"GCC"</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>      country <span class="sc">==</span> <span class="st">"United States"</span>                           <span class="sc">~</span> <span class="st">"United States"</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>      country <span class="sc">==</span> <span class="st">"Europe"</span>                                  <span class="sc">~</span> <span class="st">"Europe"</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>      country <span class="sc">==</span> <span class="st">"World"</span>                                   <span class="sc">~</span> <span class="st">"World Average"</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(oil_share_energy)) <span class="sc">|&gt;</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">country =</span> <span class="fu">fct_reorder</span>(country, oil_share_energy)) <span class="sc">|&gt;</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> country, <span class="at">y =</span> oil_share_energy, <span class="at">fill =</span> region)) <span class="sc">+</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"GCC"</span>           <span class="ot">=</span> <span class="st">"#006C35"</span>,</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"United States"</span> <span class="ot">=</span> <span class="st">"#B22234"</span>,</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Europe"</span>        <span class="ot">=</span> <span class="st">"#003399"</span>,</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"World Average"</span> <span class="ot">=</span> <span class="st">"grey50"</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="fu">percent_format</span>(<span class="at">scale =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Oil Share of Total Energy Consumption (2021)"</span>,</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"GCC economies run on oil — a closed Strait cuts off both their exports and their income"</span>,</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="cn">NULL</span>,</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"% of energy from oil"</span>,</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill     =</span> <span class="cn">NULL</span>,</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: Our World in Data"</span></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title      =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"bottom"</span></span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GCC-Energy_files/figure-html/chart-oil-gdp-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>chokepoints <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">location =</span> <span class="fu">c</span>(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Strait of Hormuz"</span>,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Strait of Malacca"</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Suez Canal"</span>,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Bab el-Mandeb"</span>,</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Turkish Straits"</span>,</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Danish Straits"</span>,</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Cape of Good Hope"</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">barrels_per_day =</span> <span class="fu">c</span>(<span class="dv">21</span>, <span class="dv">16</span>, <span class="fl">9.2</span>, <span class="fl">8.8</span>, <span class="fl">4.8</span>, <span class="fl">3.4</span>, <span class="fl">1.5</span>),</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">involves_gcc =</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>)</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>chokepoints <span class="sc">|&gt;</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">location =</span> <span class="fu">fct_reorder</span>(location, barrels_per_day)) <span class="sc">|&gt;</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> location, <span class="at">y =</span> barrels_per_day, </span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>             <span class="at">fill =</span> involves_gcc)) <span class="sc">+</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"TRUE"</span> <span class="ot">=</span> <span class="st">"#006C35"</span>, <span class="st">"FALSE"</span> <span class="ot">=</span> <span class="st">"grey60"</span>)) <span class="sc">+</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(barrels_per_day, <span class="st">"M bbl/day"</span>)),</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.1</span>, <span class="at">size =</span> <span class="fl">3.5</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>(<span class="at">clip =</span> <span class="st">"off"</span>) <span class="sc">+</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">25</span>)) <span class="sc">+</span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"World's Major Oil Chokepoints by Daily Flow (2023)"</span>,</span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"The Strait of Hormuz carries more oil than any other single point on earth"</span>,</span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="cn">NULL</span>,</span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Million barrels per day"</span>,</span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: U.S. Energy Information Administration (EIA), 2023"</span></span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title      =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GCC-Energy_files/figure-html/chart-chokepoints-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The Strait of Hormuz is not just another shipping lane. It carries more oil than any other single point on earth — nearly 21 million barrels every day. No other chokepoint comes close. If this strait closes, there is no realistic alternative route that can absorb that volume. The world would feel it immediately.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>revenue <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">country =</span> <span class="fu">c</span>(<span class="st">"Saudi Arabia"</span>, <span class="st">"UAE"</span>, <span class="st">"Kuwait"</span>, <span class="st">"Qatar"</span>, <span class="st">"Oman"</span>, <span class="st">"Bahrain"</span>),</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">daily_export_revenue_billion =</span> <span class="fu">c</span>(<span class="fl">5.8</span>, <span class="fl">2.1</span>, <span class="fl">1.5</span>, <span class="fl">1.9</span>, <span class="fl">0.5</span>, <span class="fl">0.1</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>revenue <span class="sc">|&gt;</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">country =</span> <span class="fu">fct_reorder</span>(country, daily_export_revenue_billion),</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">monthly_loss =</span> daily_export_revenue_billion <span class="sc">*</span> <span class="dv">30</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> country, <span class="at">y =</span> daily_export_revenue_billion)) <span class="sc">+</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#006C35"</span>) <span class="sc">+</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">"$"</span>, daily_export_revenue_billion, <span class="st">"B/day"</span>)),</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.1</span>, <span class="at">size =</span> <span class="fl">3.5</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>(<span class="at">clip =</span> <span class="st">"off"</span>) <span class="sc">+</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">8</span>)) <span class="sc">+</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"Estimated Daily Oil Export Revenue at Risk (2023)"</span>,</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Revenue lost per day if the Strait of Hormuz is closed"</span>,</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="cn">NULL</span>,</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"Billion USD per day"</span>,</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: EIA, OPEC Annual Statistical Bulletin 2023"</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title       =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GCC-Energy_files/figure-html/chart-revenue-loss-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Saudi Arabia stands to lose nearly $6 billion every single day the Strait is closed. Combined across all GCC nations, that is over $12 billion in daily revenue gone. These are not economies that can absorb that kind of shock for long — oil exports are not one part of their economy, they are virtually the entire economy.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>imports <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">country  =</span> <span class="fu">c</span>(<span class="st">"Saudi Arabia"</span>, <span class="st">"UAE"</span>, <span class="st">"Kuwait"</span>, <span class="st">"Qatar"</span>, <span class="st">"Oman"</span>, <span class="st">"Bahrain"</span>),</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">food_pct        =</span> <span class="fu">c</span>(<span class="dv">80</span>, <span class="dv">90</span>, <span class="dv">90</span>, <span class="dv">90</span>, <span class="dv">80</span>, <span class="dv">85</span>),</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">medicine_pct    =</span> <span class="fu">c</span>(<span class="dv">75</span>, <span class="dv">85</span>, <span class="dv">80</span>, <span class="dv">85</span>, <span class="dv">70</span>, <span class="dv">80</span>),</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">technology_pct  =</span> <span class="fu">c</span>(<span class="dv">95</span>, <span class="dv">95</span>, <span class="dv">90</span>, <span class="dv">90</span>, <span class="dv">85</span>, <span class="dv">90</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols      =</span> <span class="sc">-</span>country,</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to  =</span> <span class="st">"category"</span>,</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"pct_imported"</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">category =</span> <span class="fu">case_when</span>(</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>      category <span class="sc">==</span> <span class="st">"food_pct"</span>       <span class="sc">~</span> <span class="st">"Food"</span>,</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>      category <span class="sc">==</span> <span class="st">"medicine_pct"</span>   <span class="sc">~</span> <span class="st">"Medicine"</span>,</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>      category <span class="sc">==</span> <span class="st">"technology_pct"</span> <span class="sc">~</span> <span class="st">"Technology"</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>imports <span class="sc">|&gt;</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">country =</span> <span class="fu">fct_reorder</span>(country, pct_imported, <span class="at">.fun =</span> mean)) <span class="sc">|&gt;</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> country, <span class="at">y =</span> pct_imported, <span class="at">fill =</span> category)) <span class="sc">+</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Food"</span>       <span class="ot">=</span> <span class="st">"#c06020"</span>,</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Medicine"</span>   <span class="ot">=</span> <span class="st">"#8e44ad"</span>,</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Technology"</span> <span class="ot">=</span> <span class="st">"#1a6fa8"</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="fu">percent_format</span>(<span class="at">scale =</span> <span class="dv">1</span>),</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">110</span>)) <span class="sc">+</span></span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste0</span>(pct_imported, <span class="st">"%"</span>)),</span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>),</span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>            <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">2.8</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="st">"GCC Import Dependency: Food, Medicine &amp; Technology (2023)"</span>,</span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"With oil revenue gone, GCC nations cannot afford to pay for basic necessities"</span>,</span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">x        =</span> <span class="cn">NULL</span>,</span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">y        =</span> <span class="st">"% sourced from imports"</span>,</span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill     =</span> <span class="cn">NULL</span>,</span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption  =</span> <span class="st">"Source: World Bank, FAO, 2023"</span></span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title       =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position  =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GCC-Energy_files/figure-html/chart-import-collapse-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This is where the vulnerability becomes a survival issue. GCC nations import nearly all of their food, medicine, and technology. They can only afford to do that because of oil revenue. Without exports flowing through the Strait, that purchasing power disappears almost overnight. A country that consumes 8 times the world average in energy and imports 90% of its food has no buffer. There is no fallback.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>The data tells a clear and connected story. GCC nations consume extraordinary amounts of energy — driven by extreme heat, subsidized prices, and energy intensive industries like desalination and oil refining. That consumption runs almost entirely on fossil fuels, with renewables barely registering in the energy mix. And the revenue that sustains these societies flows almost entirely through one narrow waterway — the Strait of Hormuz.</p>
+<p>A closure of the Strait would not just inconvenience these economies. It would cut off the income they depend on to import food, medicine, and basic goods. Nations that consume the most energy per person on earth have built societies that physically cannot function without it — and cannot pay for it without their oil exports moving freely.</p>
+<p>This is why the GCC has every reason to want the Iran conflict resolved. It is not just about regional stability or diplomacy. It is about the economic and physical survival of nations that have built everything around a supply chain with a single point of failure.</p>
+<p>As global energy demand continues to rise — accelerated by AI data centers, EV adoption, and population growth — the pressure on that chokepoint only increases. The transition to renewables is not just a climate issue. For the GCC, it may eventually be the only path to an economy that does not depend on a strait that one country can close overnight.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
